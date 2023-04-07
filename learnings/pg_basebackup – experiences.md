@@ -1,3 +1,5 @@
+# pg_basebackup
+
 * pg_basebackup version <10 does not allow streaming of WAL files during tar files so it is technically useful mainly for cloning of the database for replication. To use it for backups it is necessary to use it with pg-barman.
 * pg_basebackp version 10+ has this repaired so you can create tar format backup with WAL logs catched. Which is really good for backup of huge databases (several TB and bigger).
 * Reason for using plain pg_basebackup for backup of huge databases are:
