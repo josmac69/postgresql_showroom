@@ -3,6 +3,7 @@
 * This repository contains everything about PostgreSQL database - my gathered experiences and example code.
 * I work with PostgreSQL since 2013, started with version 8.4 and went with it all the way up to the current version 15 (04/2023)
 * But I also want to use new power of AI tools to learn new things about PostgreSQL - there is always something new to learn
+* Always use latest PostgreSQL documentation
 
 ---
 
