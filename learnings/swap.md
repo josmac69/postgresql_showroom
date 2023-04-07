@@ -1,0 +1,16 @@
+# PostgreSQL on Ubuntu without swap
+If you are running “normal server” you could be asking why the hell would someone want to use database without swap.
+
+But if you have virtual machine on cloud you probably know very good what I am talking about. Because cloud instances of Linux usually run without swap. Why? There are several answers for it. First of all – it is better for owner of cloud infrastructure. If they would allow swap as default it would cause quick degradation SSD disks. Second – many people complain about swap on Linux anyway so they see it as an advantage. Third – true is that Linux is very good in handling memory so it can really run very well without swap.
+
+BUT – if you want to run database on cloud you should seriously consider to add swap file as “virtual memory” (see here – text from DigitalOcean community – https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04 ).
+
+I made different tests with PostgreSQL on Ubuntu 14.04 without swap on ridiculously small machine (2 CPUs, 1 GB RAM) without swap to see quickly results. I found this:
+
+Ubuntu worked very well even with rather overwhelming CPU load like 15 and more = meaning 15 and more “life” processes on 2 CPUs! even without swap!
+with very small work_mem=1MB PostgreSQL was able to handle 20 and more in parallel running queries over 10 different tables each with 1M+ records – queries with window functions
+funny part came when I use setting “work_mem=128MB” for each session – 3 sessions started without problems, every next attempt to run new query ended with “ERROR: out of memory – failed on request of size xxxxx”
+PostgreSQL was able to handle ca 5 sessions failing with this error but with next failing session database crashed and went into recovery mode causing end of all already running queries
+I repeated tests with 1 GB swap partition. Behavior of the database in last case was different – Linux swapped massively and whole machine looked almost frozen but processes were still running. Whole machine was almost dead for several minutes but all sessions finished successfully. But true is that only this “frozeness” prevented me from opening new session. Which would “in field” work the same way with users’ attempts. When I tried to open many sessions in script using dblink I also crushed database into recovery mode even with swap…
+
+Resume – to run PostgreSQL on Linux without swap is possible if you do not overload it with queries and your work_mem setting is reasonably small. Swap is usually configured with same size as available RAM. So taking this into consideration you should plan your database memory settings like you would have only 1/2 of RAM. So if you run cloud machine with configuration like 4 CPUs + 24 GB RAM and you want to be “on the safe side” – calculate work_mem etc. based on number of allowed sessions for 12 GB RAM. And machine will behave like it has additional 12 GB swap a you can “sleep well”. If you want to sleep even better – configure additional swap file as mentioned above. Swap cannot save you from database crashes but really improves your chances when machine is overloaded…
