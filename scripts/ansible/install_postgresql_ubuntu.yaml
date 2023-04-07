@@ -1,0 +1,41 @@
+# Install PostgreSQL of desired version on Ubuntu using Ansible
+# this should work for any latest versions of Ubuntu and PostgreSQL
+# run it like this:
+# ansible-playbook -i hosts_inventory install_postgresql_ubuntu.yml --ask-become-pass -e pgversion=9.5
+# where pgversion is version of PostgreSQL you want to install
+
+- name: install PostgreSQL on Ubuntu
+  hosts: local-test2
+  sudo: yes
+
+  vars:
+    pg_version: "{{ pgversion }}"
+
+  tasks:
+
+  - fail: msg="You must supply pg version to install like -e pgversion=9.5"
+    when: pg_version is not defined
+
+  - name: find ubuntu main repository name
+    command: "lsb_release -cs"
+    register: ubuntu_release
+
+  - debug: var=ubuntu_release.stdout
+
+  - name: check if repository is added
+    apt_repository:
+      repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ubuntu_release.stdout}}-pgdg main"
+      state: present
+
+  - name: import repository keys
+    apt_key:
+      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+      state: present
+
+  - name: update cache before install
+    apt: update_cache=yes
+
+  - name: install PostgreSQL {{pg_version}}
+    apt:
+      name: postgresql-{{pg_version}}
+      state: present
