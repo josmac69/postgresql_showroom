@@ -1,0 +1,9 @@
+# PostgreSQL and MySQL on cloud instances – few small hints
+Many companies use in these days cloud instances which allows them to live without stress from maintaining their own infrastructure. On the other hand it gives them new kinds of stress when internet connection is not working etc.
+
+* Sometimes there are strange slowdowns in network connection between different cloud providers so if you have replicas on different providers you definitely need archiving of logs on master for long enough
+* Do not try to “save money at any cost” – if your instance will be too small databases will have problem
+* Running PostgreSQL 9.5 or 9.6 on instance with only 1 CPU is almost certain suicide – give your smallest pg instance at least 2 CPUs – even if your database is very small with small number of connections. Otherwise you will have to solve strange errors “out of space on device” even if you have enough of free memory and disk space. Generally speaking especially with 9.6 you need more CPUs than memory – higher work_mem setting is not always better.
+* MySQL especially older versions (many companies still run 5.5 etc.) generally needs more memory for buffer pool than CPUs. Older versions of MySQL are almost unable to use more CPUs (I apologize to developers but this is what I found) but can definitely have big profit from keeping whole database in memory buffer – this is something MySQL is really good at.
+* MySQL on cloud can have strange problems with connection errors so set max_connect_errors to slightly higher number than is usual
+* Also MySQL can have problems with check of IP addresses against DNS so setting “skip-name-resolve” can help
