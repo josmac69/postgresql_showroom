@@ -1,4 +1,4 @@
-# Snaphot isolation
+# Snapshots in PostgreSQL
 
 PostgreSQL uses snapshot isolation to provide each transaction with a consistent view of the database at the time the transaction started. This ensures that the transaction is not affected by changes made by other concurrent transactions. Here's an overview of how PostgreSQL creates a snapshot for snapshot isolation during a transaction:
 
@@ -21,3 +21,17 @@ When the transaction reads data from the database, PostgreSQL uses the snapshot 
 By checking these conditions, PostgreSQL ensures that the transaction only sees the data that was committed before the transaction started, providing a consistent view of the database.
 
 In summary, PostgreSQL creates a snapshot for snapshot isolation during a transaction by assigning a unique transaction ID, maintaining a list of active transactions, and using the transaction ID to determine the visibility of rows based on their xmin and xmax values. This mechanism allows each transaction to work with a consistent view of the database, preventing conflicts and maintaining isolation between concurrent transactions.
+
+****
+
+PostgreSQL creates snapshots in memory, not on disk. When a new transaction starts, a snapshot is created in the shared memory of the PostgreSQL server. This snapshot contains information about the transaction's visibility rules, which are based on the transaction IDs and the current list of active transactions at the time the snapshot is created.
+
+Storing snapshots in memory offers several advantages:
+
+* Performance: Accessing data in memory is much faster than accessing data on disk. Since snapshots are used frequently during transaction processing to determine the visibility of rows, storing them in memory significantly improves performance.
+
+* Dynamic: Snapshots are transient and specific to each transaction. Storing them in memory allows PostgreSQL to create and manage them more efficiently, as opposed to persisting them on disk.
+
+* Isolation: Storing snapshots in memory helps maintain isolation between transactions. Each transaction has its own snapshot in memory, providing a consistent view of the database without interference from other concurrent transactions.
+
+It's important to note that snapshots are not the same as the actual data in the database. The data itself is stored on disk in tables and indexes. Snapshots are metadata that helps PostgreSQL determine the visibility of rows for each transaction, based on the state of the database at the time the transaction started.
