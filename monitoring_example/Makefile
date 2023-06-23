@@ -7,5 +7,20 @@ stop:
 psql:
 	docker exec -it postgres psql -U postgres -d postgres
 
-.PHONY: start stop psql
+grafana-bash:
+	docker exec -it grafana /bin/bash
+
+open-grafana:
+	open http://localhost:3000
+
+open-prometheus:
+	open http://localhost:9090
+
+.PHONY: start \
+	stop \
+	psql \
+	grafana-bash \
+	open-grafana \
+	open-prometheus
+
 
