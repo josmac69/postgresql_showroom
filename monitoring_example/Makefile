@@ -16,6 +16,10 @@ open-grafana:
 open-prometheus:
 	open http://localhost:9090
 
+hammerdbcli:
+	docker exec -it hammerdb /bin/bash
+#	./hammerdbcli auto /app/script.tcl
+
 .PHONY: start \
 	stop \
 	psql \
