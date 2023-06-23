@@ -1,0 +1,24 @@
+pg_stat_user_tables:
+  query: "SELECT schemaname, relname, seq_scan FROM pg_stat_user_tables"
+  metrics:
+    - schemaname:
+        usage: "LABEL"
+        description: "Name of the schema that this table is in"
+    - relname:
+        usage: "LABEL"
+        description: "Name of this table"
+    - seq_scan:
+        usage: "COUNTER"
+        description: "Number of sequential scans initiated on this table"
+    # Add more metrics as needed
+
+# custom_query_2:
+#   query: "SELECT ... FROM ..."
+#   metrics:
+#     - column_1:
+#         usage: "LABEL"
+#         description: "Description of column 1"
+#     - column_2:
+#         usage: "COUNTER"
+#         description: "Description of column 2"
+#     # Add more metrics as needed
