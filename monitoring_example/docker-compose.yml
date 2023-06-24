@@ -12,6 +12,11 @@ services:
       - ./db-data:/var/lib/postgresql/data
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - postgresql_monitoring
 
