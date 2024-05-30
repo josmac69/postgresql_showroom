@@ -27,6 +27,15 @@ INSERT INTO my_table_strarray (jsonb_column) VALUES
 ('{"array_field": ["cherry", "date", "elderberry"]}');
 ```
 
+## What works
+
+CREATE INDEX idx_my_table_strarray_array_field_idx2 ON my_table_strarray
+USING gin (((jsonb_column -> 'array_field')::text) gin_trgm_ops);
+
+
+## This does not work:
+We cannot create GIN index using gin_trgm_ops operator class because it does not support text[] data type.
+
 4. Create a function to convert the JSONB array to a text array:
 
 ```sql
